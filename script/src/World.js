@@ -78,8 +78,13 @@ export class World{
         }
 
     }
-
-    // Needs fix
+    DrawBorder(ctx){
+        ctx.save();
+        ctx.strokeStyle = "rgba(20, 20, 20)";
+        ctx.lineWidth = 20;
+        ctx.strokeRect(this.trueX, this.trueY, GameSize.width, GameSize.heigth);
+        ctx.restore();
+    }
     ClearEntityLayer() {
         this.entityCtx.clearRect(0, 0, ScreenSize.width, ScreenSize.height);
     }

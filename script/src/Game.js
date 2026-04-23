@@ -18,12 +18,13 @@ export class Game{
         this.world.CreateLayers();
 
         this.player = new Player({
-            xas: ScreenSize.width/2,
-            yas: ScreenSize.height/2,
+            xas: this.world.trueX,
+            yas: this.world.trueY,
             ctx: this.world.entityCtx
         });
 
         this.world.GenerateWorld();
+        this.world.DrawBorder(this.world.worldCtx);
         this.world.matrix = this.world.GenerateMatrix();
         this.world.DrawTiles();
 
@@ -41,7 +42,7 @@ export class Game{
         this.world.ClearEntityLayer();
         const entityCtx = this.world.entityCtx;
         entityCtx.save();
-        this.player.Update(delta, this.parser.getKeysArray(), this.world.matrix);
+        this.player.Update(delta, this.parser.getKeysArray());
         entityCtx.restore();
 
         this.loopId = requestAnimationFrame(this.loop.bind(this));

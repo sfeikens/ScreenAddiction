@@ -1,7 +1,7 @@
 export const GameSize = {
     width: 1000,
     heigth: 800,
-    blockSize: 10,
+    blockSize: 100,
     centerX: 1000/2,
     centerY: 800/2,
 }
@@ -13,9 +13,10 @@ export const ScreenSize = {
     centerY: window.screen.availHeight/2,
 }
 
-export const PlayerSize = {
-    width: 14,
-    height: 14,
+export const PlayerConstants = {
+    width: 28,
+    height: 28,
+    baseVelocity:0.6,
 }
 
 export const KEYS ={

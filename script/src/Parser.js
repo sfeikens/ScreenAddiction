@@ -20,7 +20,7 @@ export class Parser{
             e.preventDefault();
             this.keysDown[key] = true;
         }
-        // console.log(this.keysDown);
+        console.log(e.code);
     }
 
     removeFromKeysDown(e) {
@@ -39,7 +39,7 @@ export class Parser{
                 return KEYS._RIGHT;
             case 'KeyW':
                 return KEYS._UP;
-            case 'keyS':
+            case 'KeyS':
                 return KEYS._DOWN;
         }
     }
