@@ -1,10 +1,13 @@
 import { GameSize, ScreenSize } from "./Constants.js";
+import { Tile } from "./Tile.js";
 
 export class World{
     
     constructor(){
         this.WorldGrid = [];
         this.backgrImg = new Image();
+        this.trueX = ScreenSize.centerX-GameSize.centerX;
+        this.trueY = ScreenSize.centerY-GameSize.centerY;
 
         // Layer contexts, wordt gebruikt in CreateLayers()
         this.backgroundCtx = null;
@@ -45,21 +48,39 @@ export class World{
         ctx.imageSmoothingEnabled = false; 
         return ctx;
     }
-    
+    GenerateMatrix(){
+        const matrix=[];
+        for (let x = 0; x*GameSize.blockSize < GameSize.width; x++) {
+            const row = [];
+            const color = x%2==0?1:2;
+            for (let y = 0; y*GameSize.blockSize < GameSize.heigth; y++) {
+                row.push(new Tile({xas: this.trueX + GameSize.blockSize * x, yas: this.trueY + GameSize.blockSize * y, tileINDX: color}));
+            }
+            matrix.push(row);
+        }
+        return matrix;
+    }
+    DrawTiles() {
+        for (const row of this.matrix) {
+            for (const tile of row) {
+                tile.Draw(this.worldCtx);
+            }
+        }
+    }
     GenerateWorld() {
 
         this.backgrImg.onload = () => {
-            this.backgroundCtx.drawImage(this.backgrImg, 0, 0, SCRDIMENSIONS._SCRWIDTH, SCRDIMENSIONS._SCRHEIGHT);
+            this.backgroundCtx.drawImage(this.backgrImg, 0, 0, ScreenSize.width, ScreenSize.height);
         };
-        this.backgrImg.src = "./assets/Image.png";
+        this.backgrImg.src = "./assets/image-asset.jpeg";
         if (this.backgrImg.complete) {
-            this.backgroundCtx.drawImage(this.backgrImg, 0, 0, SCRDIMENSIONS._SCRWIDTH, SCRDIMENSIONS._SCRHEIGHT);
+            this.backgroundCtx.drawImage(this.backgrImg, 0, 0, ScreenSize.width, ScreenSize.height);
         }
 
     }
 
-    // Call each frame before entities are drawn
+    // Needs fix
     ClearEntityLayer() {
-        this.entityCtx.clearRect(0, 0, SCRDIMENSIONS._SCRWIDTH, SCRDIMENSIONS._SCRHEIGHT);
+        this.entityCtx.clearRect(0, 0, ScreenSize.width, ScreenSize.height);
     }
 }

@@ -24,6 +24,8 @@ export class Game{
         });
 
         this.world.GenerateWorld();
+        this.world.matrix = this.world.GenerateMatrix();
+        this.world.DrawTiles();
 
 
         this.loopId = requestAnimationFrame(this.loop.bind(this));

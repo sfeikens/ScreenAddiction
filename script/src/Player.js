@@ -2,7 +2,7 @@
 import { Entity } from './Entity.js';
 
 // Constants
-import { GameSize, ScreenSize } from './Constants.js';
+import { GameSize, PlayerSize, ScreenSize } from './Constants.js';
 
 export class Player extends Entity{
     //fields
@@ -31,10 +31,7 @@ export class Player extends Entity{
         this.HandleInput(delta, keysDown);
         this.Move(delta);
         // Recalculate COM and hitbox AFTER moving so collision sees the new position
-        this.COM = this.SetUpCOM(PlayerSize._WIDTH, PlayerSize._HEIGHT+80)
-        this.HandleAnimation();
-        this.PlayPlayerAnimation(this.entityState, delta, this.direction, this.actionDirection);
-        this.Developer(this.ctx, this.devstuff, matrix);
+        this.COM = this.SetUpCOM(PlayerSize.width, PlayerSize.height);
     }
 
     HandleInput(delta, keysDown){
