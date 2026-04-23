@@ -3,6 +3,7 @@ import { Entity } from './Entity.js';
 
 // Constants
 import { GameSize, PlayerConstants, ScreenSize, KEYS } from './Constants.js';
+import { WALL_SIZE } from './Wall.js';
 
 export class Player extends Entity{
     //fields
@@ -27,14 +28,50 @@ export class Player extends Entity{
     }
     // methods
 
-    Update(delta, keysDown) {
+    Update(delta, keysDown, walls = []) {
         this.HandleInput(delta, keysDown);
-        this.Move(delta);
+ 
+        // Resolve each axis independently so corners never block perpendicular sliding
+        this.entityPositionX += this.entityVelocityX * delta;
+        this.ResolveWallCollisionsX(walls);
+ 
+        this.entityPositionY += this.entityVelocityY * delta;
+        this.ResolveWallCollisionsY(walls);
+ 
         this.ClampToBorder();
-        // Recalculate COM and hitbox AFTER moving so collision sees the new position
+        // Recalculate COM after all movement/collision is resolved
         this.DrawPlayer(this.ctx);
         this.COM = this.SetUpCOM(PlayerConstants.width, PlayerConstants.height);
     }
+ 
+    // Push the player out of wall overlap on the X axis only.
+    ResolveWallCollisionsX(walls) {
+        for (const wall of walls) {
+            const p = this.SetUpHitBox(PlayerConstants.width, PlayerConstants.height);
+            const w = wall.SetUpHitBox(WALL_SIZE, WALL_SIZE);
+ 
+            if (p.maxX <= w.minX || p.minX >= w.maxX ||
+                p.maxY <= w.minY || p.minY >= w.maxY) continue;
+ 
+            const overlapX = Math.min(p.maxX, w.maxX) - Math.max(p.minX, w.minX);
+            this.entityPositionX += p.minX < w.minX ? -overlapX : overlapX;
+        }
+    }
+ 
+    // Push the player out of wall overlap on the Y axis only.
+    ResolveWallCollisionsY(walls) {
+        for (const wall of walls) {
+            const p = this.SetUpHitBox(PlayerConstants.width, PlayerConstants.height);
+            const w = wall.SetUpHitBox(WALL_SIZE, WALL_SIZE);
+ 
+            if (p.maxX <= w.minX || p.minX >= w.maxX ||
+                p.maxY <= w.minY || p.minY >= w.maxY) continue;
+ 
+            const overlapY = Math.min(p.maxY, w.maxY) - Math.max(p.minY, w.minY);
+            this.entityPositionY += p.minY < w.minY ? -overlapY : overlapY;
+        }
+    }
+
 
     HandleInput(delta, keysDown){
         const pressedLeft  = !!keysDown[KEYS._LEFT];
@@ -44,6 +81,7 @@ export class Player extends Entity{
 
         const movingX = pressedLeft !== pressedRight;
         const movingY = pressedUp   !== pressedDown;
+        // Normalise diagonal so speed stays at baseVelocity in all directions
         const speed = movingX && movingY
             ? PlayerConstants.baseVelocity / Math.sqrt(2)
             : PlayerConstants.baseVelocity;
@@ -66,10 +104,11 @@ export class Player extends Entity{
     }
 
     ClampToBorder(){
+        // World border — same formula World uses for trueX / trueY
         const minX = ScreenSize.centerX - GameSize.centerX;
         const minY = ScreenSize.centerY - GameSize.centerY;
         const maxX = minX + GameSize.width  - PlayerConstants.width;
-        const maxY = minY + GameSize.heigth - PlayerConstants.height;
+        const maxY = minY + GameSize.height - PlayerConstants.height;
 
         this.entityPositionX = Math.max(minX, Math.min(this.entityPositionX, maxX));
         this.entityPositionY = Math.max(minY, Math.min(this.entityPositionY, maxY));

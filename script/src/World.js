@@ -1,10 +1,12 @@
 import { GameSize, ScreenSize } from "./Constants.js";
 import { Tile } from "./Tile.js";
+import { Wall, WALL_SIZE } from "./Wall.js";
 
 export class World{
     
     constructor(){
         this.WorldGrid = [];
+        this.walls     = [];
         this.backgrImg = new Image();
         this.trueX = ScreenSize.centerX-GameSize.centerX;
         this.trueY = ScreenSize.centerY-GameSize.centerY;
@@ -17,6 +19,43 @@ export class World{
     }
 
     // methods
+
+    /*
+     * CreateWall — builds a wall out of Wall tiles and draws it on the world layer.
+     *
+     * @param {number} x                Tile-grid column  (0 = left edge of game world)
+     * @param {number} y                Tile-grid row     (0 = top  edge of game world)
+     * @param {number} orientationIndex 0 = horizontal | 1 = vertical | 2 = diagonal (↘)
+     * @param {number} length           Tiles along the primary axis
+     * @param {number} width            Tiles along the secondary axis
+     * @param {number} colorIndex       0 = grey | 1 = dark grey | 2 = bright red | 3 = brown
+     */
+    CreateWall({ x = 0, y = 0, orientationIndex = 0, length = 1, width = 1, colorIndex = 0 }) {
+        for (let l = 0; l < length; l++) {
+            for (let w = 0; w < width; w++) {
+                let tileX, tileY;
+                if (orientationIndex === 0) {        // horizontal — length → right, width → down
+                    tileX = x + l;
+                    tileY = y + w;
+                } else if (orientationIndex === 1) { // vertical   — length → down,  width → right
+                    tileX = x + w;
+                    tileY = y + l;
+                } else {                             // diagonal   — length → ↘,     width → right
+                    tileX = x + l + w;
+                    tileY = y + l;
+                }
+
+                const wall = new Wall({
+                    xas: this.trueX + tileX * WALL_SIZE,
+                    yas: this.trueY + tileY * WALL_SIZE,
+                    colorIndex,
+                });
+                this.walls.push(wall);
+                wall.Draw(this.worldCtx);
+                
+            }
+        }
+    }
 
     /*
      * De creation van de layers zier er een beetje zo uit:
@@ -52,7 +91,7 @@ export class World{
         const matrix=[];
         for (let x = 0; x*GameSize.blockSize < GameSize.width; x++) {
             const row = [];
-            for (let y = 0; y*GameSize.blockSize < GameSize.heigth; y++) {
+            for (let y = 0; y*GameSize.blockSize < GameSize.height; y++) {
                 const color = (x + y) % 2 === 0 ? 1 : 2;
                 row.push(new Tile({xas: this.trueX + GameSize.blockSize * x, yas: this.trueY + GameSize.blockSize * y, tileINDX: color}));
             }
@@ -82,7 +121,7 @@ export class World{
         ctx.save();
         ctx.strokeStyle = "rgba(20, 20, 20)";
         ctx.lineWidth = 20;
-        ctx.strokeRect(this.trueX, this.trueY, GameSize.width, GameSize.heigth);
+        ctx.strokeRect(this.trueX, this.trueY, GameSize.width, GameSize.height);
         ctx.restore();
     }
     ClearEntityLayer() {

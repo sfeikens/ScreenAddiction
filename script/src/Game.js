@@ -27,7 +27,7 @@ export class Game{
         this.world.DrawBorder(this.world.worldCtx);
         this.world.matrix = this.world.GenerateMatrix();
         this.world.DrawTiles();
-
+        this.world.CreateWall({ x: 16, y: 16, orientationIndex: 0, length: 20, width: 2, colorIndex: 3 })
 
         this.loopId = requestAnimationFrame(this.loop.bind(this));
     }
@@ -42,7 +42,7 @@ export class Game{
         this.world.ClearEntityLayer();
         const entityCtx = this.world.entityCtx;
         entityCtx.save();
-        this.player.Update(delta, this.parser.getKeysArray());
+        this.player.Update(delta, this.parser.getKeysArray(), this.world.walls);
         entityCtx.restore();
 
         this.loopId = requestAnimationFrame(this.loop.bind(this));

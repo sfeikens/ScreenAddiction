@@ -1,9 +1,9 @@
 export const GameSize = {
-    width: 1000,
-    heigth: 800,
-    blockSize: 100,
-    centerX: 1000/2,
-    centerY: 800/2,
+    width: 64*15,
+    height: 64*10,
+    blockSize: 64,
+    get centerX() {const half = this.width/2; return half},
+    get centerY() {const half = this.height/2; return half},
 }
 
 export const ScreenSize = {

@@ -20,7 +20,7 @@ export class Parser{
             e.preventDefault();
             this.keysDown[key] = true;
         }
-        console.log(e.code);
+        // console.log(e.code);
     }
 
     removeFromKeysDown(e) {

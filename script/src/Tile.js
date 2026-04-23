@@ -4,8 +4,8 @@ import { World } from "./World.js";
 
 const TileTypeMap = {
     0: null,
-    1: "rgb(93, 93, 93)",
-    2: "rgb(169, 169, 169)"
+    1: "rgb(94, 94, 94)",
+    2: "rgb(158, 158, 158)"
 };
 
 export class Tile extends Entity {
