@@ -4,8 +4,8 @@ import { World } from "./World.js";
 
 const TileTypeMap = {
     0: null,
-    1: "blue",
-    2: "red"
+    1: "rgb(0, 0, 0)",
+    2: "rgb(182, 0, 0)"
 };
 
 export class Tile extends Entity {
@@ -23,8 +23,8 @@ export class Tile extends Entity {
 
     Draw(ctx) {
         const tileType = TileTypeMap[this.#tileINDX];
-        ctx.strokeStyle = this.tileINDX == 1 ? "rgb(255, 0, 0)":"rgb(0, 0, 255)";
-        ctx.lineWidth = 10;
-        ctx.strokeRect(this.entityPositionX, this.entityPositionY, GameSize.blockSize, GameSize.blockSize);
+        if (tileType === null) return;
+        ctx.fillStyle = tileType;
+        ctx.fillRect(this.entityPositionX, this.entityPositionY, GameSize.blockSize, GameSize.blockSize);
     }
 }

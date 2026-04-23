@@ -52,8 +52,8 @@ export class World{
         const matrix=[];
         for (let x = 0; x*GameSize.blockSize < GameSize.width; x++) {
             const row = [];
-            const color = x%2==0?1:2;
             for (let y = 0; y*GameSize.blockSize < GameSize.heigth; y++) {
+                const color = (x + y) % 2 === 0 ? 1 : 2;
                 row.push(new Tile({xas: this.trueX + GameSize.blockSize * x, yas: this.trueY + GameSize.blockSize * y, tileINDX: color}));
             }
             matrix.push(row);
