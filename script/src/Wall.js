@@ -8,6 +8,7 @@ const WallColorMap = {
     1: "rgb(80, 80, 80)",    // dark grey
     2: "rgb(200, 50, 50)",   // bright red
     3: "rgb(160, 100, 40)",  // brown
+    4: "rgb(0, 0, 0)",
 };
 
 export class Wall extends Entity {

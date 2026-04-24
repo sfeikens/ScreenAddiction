@@ -27,3 +27,6 @@ export const KEYS ={
     _DOWN: "S",
 
 }
+
+// Coin dimensions
+export const COIN_SIZE = 20;
