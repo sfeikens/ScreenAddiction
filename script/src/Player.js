@@ -113,6 +113,55 @@ export class Player extends Entity{
         this.entityPositionX = Math.max(minX, Math.min(this.entityPositionX, maxX));
         this.entityPositionY = Math.max(minY, Math.min(this.entityPositionY, maxY));
     }
+    
+    PlayPlayerAnimation(state, delta, direction, actionDirection) {
+        this.animationTimer += delta;
+        if (this.animationTimer >= this.animationInterval) {
+            this.gameFrame++;
+            this.animationTimer = 0;
+        }
+
+        if (actionDirection !== null){ direction = actionDirection}
+
+        const animation = PlayerAnimations[state];
+
+        if (this.animationLocked && this.gameFrame >= animation.loc.length) {
+            this.animationLocked = false;
+            this.SetState(PlayerStates._IDLE);
+            return;
+        }
+
+        const position = this.animationLocked
+            ? Math.min(this.gameFrame, animation.loc.length - 1)
+            : this.gameFrame % animation.loc.length;
+
+        const frameX = animation.loc[position].x;
+        const frameY = animation.loc[position].y;
+        
+        this.ctx.save();
+
+        if (direction === -1) {
+            this.ctx.translate(this.entityPositionX + PlayerSize._WIDTH, this.entityPositionY);
+            this.ctx.scale(-1, 1);
+            this.ctx.drawImage(
+                animation.image,
+                frameX, frameY,
+                PlayerSize._WIDTH, PlayerSize._HEIGHT,
+                0, 0,
+                PlayerSize._WIDTH, PlayerSize._HEIGHT
+            );
+        } else {
+            this.ctx.drawImage(
+                animation.image,
+                frameX, frameY,
+                PlayerSize._WIDTH, PlayerSize._HEIGHT,
+                this.entityPositionX, this.entityPositionY,
+                PlayerSize._WIDTH, PlayerSize._HEIGHT
+            );
+        }
+
+        this.ctx.restore();
+    }
 
     DrawPlayer(ctx){
         ctx.fillStyle = "rgb(0, 0, 0)"

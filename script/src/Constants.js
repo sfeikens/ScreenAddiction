@@ -27,3 +27,23 @@ export const KEYS ={
     _DOWN: "S",
 
 }
+const createImage = (src) => {
+    const img = new Image();
+    img.src = src;
+    return img;
+};
+export const Images ={
+    
+    _PLAYER: createImage("./assets/moai.png")
+
+}
+function getSpriteLoc(frames, row, w, h, startFrame = 0) {
+    let returnArr = [];
+    for (let i = startFrame; i < frames; i++) {
+        returnArr[i-startFrame] = {
+            x: w * i,
+            y: h * row
+        };
+    }
+    return returnArr;
+}
