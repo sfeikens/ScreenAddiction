@@ -4,6 +4,7 @@ import { Entity } from './Entity.js';
 // Constants
 import { GameSize, PlayerConstants, ScreenSize, KEYS } from './Constants.js';
 import { WALL_SIZE } from './Wall.js';
+import { DOOR_WIDTH, DOOR_HEIGHT } from './Door.js';
 
 export class Player extends Entity{
     //fields
@@ -101,6 +102,21 @@ export class Player extends Entity{
         } else {
             this.SetVelocity({y: speed});
         }
+    }
+
+    // Returns the first Door the player overlaps, or null.
+    // Game.js reads this each frame to trigger a room transition.
+    CheckDoors(doors) {
+        for (const door of doors) {
+            const p = this.SetUpHitBox(PlayerConstants.width, PlayerConstants.height);
+            const d = door.SetUpHitBox(DOOR_WIDTH, DOOR_HEIGHT);
+
+            if (p.maxX > d.minX && p.minX < d.maxX &&
+                p.maxY > d.minY && p.minY < d.maxY) {
+                return door;
+            }
+        }
+        return null;
     }
 
     ClampToBorder(){

@@ -1,12 +1,14 @@
 import { GameSize, ScreenSize } from "./Constants.js";
 import { Tile } from "./Tile.js";
 import { Wall, WALL_SIZE } from "./Wall.js";
+import { Door, DOOR_WIDTH, DOOR_HEIGHT } from "./Door.js";
 
 export class World{
     
     constructor(){
         this.WorldGrid = [];
         this.walls     = [];
+        this.doors     = [];
         this.backgrImg = new Image();
         this.trueX = ScreenSize.centerX-GameSize.centerX;
         this.trueY = ScreenSize.centerY-GameSize.centerY;
@@ -19,6 +21,55 @@ export class World{
     }
 
     // methods
+
+    /*
+     * CreateDoor — places a hand-drawn door on the world layer.
+     *
+     * @param {number} x            Wall-grid column (same coords as CreateWall)
+     * @param {number} y            Wall-grid row
+     * @param {string} targetRoomId Room id this door leads to
+     * @param {number} spawnX       Wall-grid x player spawns at in target room
+     * @param {number} spawnY       Wall-grid y player spawns at in target room
+     */
+    CreateDoor({ x = 0, y = 0, targetRoomId, spawnX = x, spawnY = y }) {
+        const door = new Door({
+            xas: this.trueX + x * WALL_SIZE,
+            yas: this.trueY + y * WALL_SIZE,
+            targetRoomId,
+            spawnX,
+            spawnY,
+        });
+        this.doors.push(door);
+        door.Draw(this.worldCtx);
+    }
+
+    /*
+     * LoadRoom — clears the world layer and rebuilds it from a Room definition.
+     * Call this whenever the player moves to a new room.
+     *
+     * @param {Room} room  A Room instance with walls[] and doors[] arrays
+     */
+    LoadRoom(room) {
+        // Reset state
+        this.walls = [];
+        this.doors = [];
+
+        // Clear the world canvas
+        this.worldCtx.clearRect(0, 0, ScreenSize.width, ScreenSize.height);
+
+        // Redraw static world elements
+        this.matrix = this.GenerateMatrix();
+        this.DrawTiles();
+        this.DrawBorder(this.worldCtx);
+
+        // Build walls and doors from room definition
+        for (const wallDef of room.walls) {
+            this.CreateWall(wallDef);
+        }
+        for (const doorDef of room.doors) {
+            this.CreateDoor(doorDef);
+        }
+    }
 
     /*
      * CreateWall — builds a wall out of Wall tiles and draws it on the world layer.

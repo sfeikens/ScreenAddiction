@@ -25,7 +25,7 @@ export class Entity{
 
     }
     // methods
-    InitRenderer({ctx, elementSizeX = 10, elementSizeY = 10}){
+    InitRenderer({ctx, elementSizeX = GameSize.blockSize, elementSizeY = GameSize.blockSize}){
         this.ctx = ctx;
         this.elementSizeX = elementSizeX;
         this.elementSizeY = elementSizeY;
