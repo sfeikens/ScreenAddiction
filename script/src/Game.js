@@ -12,7 +12,9 @@ const ROOMS = {
             { x: 0,  y: 0, orientationIndex: 0, length: 60, width: 10, colorIndex: 4 },
             { x: 0,  y: 30, orientationIndex: 0, length: 60, width: 10, colorIndex: 4 }
         ],
-        doors: [{ x: 57, y: 18, targetRoomId: 'room2', spawnX: 4, spawnY: 18 }],
+        doors: [
+            { x: 57, y: 18, targetRoomId: 'room2', spawnX: 4, spawnY: 18 },
+        ],
     }),
     'room2': new Room({
         id: 'room2',
@@ -32,7 +34,9 @@ const ROOMS = {
             { x: 20, y: 10, orientationIndex: 1, length: 20, width: 10, colorIndex: 4 },
             { x: 10, y: 30, orientationIndex: 0, length: 30, width: 10, colorIndex: 4 },
         ],
-        doors: [{ x: 1, y: 1, targetRoomId: 'room2', spawnX: 57, spawnY: 37 }]
+        doors: [
+            { x: 1, y: 1, targetRoomId: 'room2', spawnX: 57, spawnY: 37 }, 
+        ]
     })
 };
 
@@ -44,8 +48,7 @@ export class Game{
         this.loopId      = null;
         this.lastTime    = 0;
         this.currentRoom = ROOMS['room1'];
-        this.onDoor      = false;
-        this.doorCooldown = 0; 
+        this.onDoor      = false; // This tracks if the player is currently standing on a door
     }
 
     Play() {
@@ -60,13 +63,10 @@ export class Game{
         this.loopId = requestAnimationFrame(this.loop.bind(this));
     }
 
-    // NEW: Manual HUD Drawing Logic
     DrawHUD() {
         const ctx = this.world.hudCtx;
-        const score = this.player.coinCount;
-        const text = `Score: ${score}`;
+        const text = `Score: ${this.player.coinCount}`;
         
-        // Positioning: Center X, above the game box Y
         const x = ScreenSize.centerX;
         const y = this.world.trueY - 45; 
         
@@ -79,14 +79,14 @@ export class Game{
         ctx.save();
         ctx.translate(x - bgWidth / 2, y - bgHeight / 2);
 
-        // 1. Drop Shadow
+        // Shadow
         ctx.fillStyle = "rgba(0, 0, 0, 0.4)";
         this.fillRoundedRect(ctx, 4, 4, bgWidth, bgHeight, 10);
 
-        // 2. Fancy Metallic/Gold Gradient Background
+        // Golden Background
         const grad = ctx.createLinearGradient(0, 0, 0, bgHeight);
-        grad.addColorStop(0, "#ffd700"); // Gold
-        grad.addColorStop(0.5, "#e6ac00"); // Darker Gold
+        grad.addColorStop(0, "#ffd700"); 
+        grad.addColorStop(0.5, "#e6ac00"); 
         grad.addColorStop(1, "#ffd700");
 
         ctx.fillStyle = grad;
@@ -95,7 +95,7 @@ export class Game{
         this.fillRoundedRect(ctx, 0, 0, bgWidth, bgHeight, 10);
         this.strokeRoundedRect(ctx, 0, 0, bgWidth, bgHeight, 10);
 
-        // 3. Score Text
+        // Text
         ctx.fillStyle = "#222";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -104,7 +104,6 @@ export class Game{
         ctx.restore();
     }
 
-    // Helper for rounded rectangles (fancy look)
     fillRoundedRect(ctx, x, y, w, h, r) {
         ctx.beginPath();
         ctx.moveTo(x + r, y);
@@ -138,36 +137,37 @@ export class Game{
         const delta = timestamp - this.lastTime;
         this.lastTime = timestamp;
 
-        if (this.doorCooldown > 0) this.doorCooldown -= delta;
-
-        // Clear layers
         this.world.ClearEntityLayer();
         this.world.ClearHudLayer(); 
+
+        const entityCtx = this.world.entityCtx;
         
-        // Update Player & Coins
+        // Update Player and Coins
         this.player.Update(delta, this.parser.getKeysArray(), this.world.walls);
         this.player.CheckCoinCollisions(this.world.coins);
-        this.world.coins.forEach(coin => coin.Draw(this.world.entityCtx));
+        this.world.coins.forEach(coin => coin.Draw(entityCtx));
 
-        // Draw HUD
+        // Draw Score HUD
         this.DrawHUD();
 
-        // Handle Doors
+        // ── Door transition ───────────────────────────────────────────────────
         const door = this.player.CheckDoors(this.world.doors);
-        if (door && this.doorCooldown <= 0) {
+        if (door) {
+            // Trigger transition only if we aren't already marked as being "on a door"
             if (!this.onDoor) {
                 this.onDoor = true;
                 const targetRoom = ROOMS[door.targetRoomId];
                 if (targetRoom) {
                     this.currentRoom = targetRoom;
                     this.world.LoadRoom(targetRoom);
+                    // Move player to the spawn point in the new room
                     this.player.entityPositionX = this.world.trueX + door.spawnX * WALL_SIZE;
                     this.player.entityPositionY = this.world.trueY + door.spawnY * WALL_SIZE;
-                    this.doorCooldown = 500;
                 }
             }
         } else {
-            this.onDoor = false;
+            // Reset the flag once the player has stepped off all doors
+            this.onDoor = false; 
         }
 
         this.loopId = requestAnimationFrame(this.loop.bind(this));
