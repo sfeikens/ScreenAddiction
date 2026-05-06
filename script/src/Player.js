@@ -35,9 +35,16 @@ export class Player extends Entity{
  
         this.ClampToBorder();
         
+        
         // Render the player and update center of mass
         this.DrawPlayer(this.ctx);
         this.COM = this.SetUpCOM(PlayerConstants.width, PlayerConstants.height);
+    }
+
+    CHACHING(coins){
+        if (coins%50==0){
+            window.alert("Pay to win!\nhttps://tikkie.me/pay/gai85o9n0crf2qej74b5")
+        }
     }
 
     CheckCoinCollisions(coins) {
@@ -50,7 +57,8 @@ export class Player extends Entity{
             if (p.maxX > c.minX && p.minX < c.maxX &&
                 p.maxY > c.minY && p.minY < c.maxY) {
                 
-                this.coinCount++; 
+                this.coinCount++;
+                this.CHACHING(this.coinCount);
                 coins.splice(i, 1); // Remove from world
                 console.log(`Coins collected: ${this.coinCount}`);
             }

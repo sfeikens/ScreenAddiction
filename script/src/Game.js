@@ -36,6 +36,17 @@ const ROOMS = {
         ],
         doors: [
             { x: 1, y: 1, targetRoomId: 'room2', spawnX: 57, spawnY: 37 }, 
+            { x:1,y:35,targetRoomId: 'room4', spawnX:1,spawnY:1}
+        ]
+    }),
+    'room4': new Room({
+        id:'room4',
+        walls: [
+            { x:0, y:30, orientationIndex:0, length:60,width:10,colorIndex:4},
+            {x:50,y:0,orientationIndex:1,length:30,width:10,colorIndex:4},
+        ],
+        doors: [
+            {x:1,y:1,targetRoomId: 'room3', spawnX:1,spawnY:35},
         ]
     })
 };

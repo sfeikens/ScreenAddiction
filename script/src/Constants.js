@@ -14,8 +14,8 @@ export const ScreenSize = {
 }
 
 export const PlayerConstants = {
-    width: 28,
-    height: 28,
+    width: 32,
+    height: 32,
     baseVelocity:0.6,
 }
 

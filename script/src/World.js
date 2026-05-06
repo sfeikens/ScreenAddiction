@@ -150,7 +150,7 @@ export class World{
         this.backgrImg.onload = () => {
             this.backgroundCtx.drawImage(this.backgrImg, 0, 0, ScreenSize.width, ScreenSize.height);
         };
-        this.backgrImg.src = "./assets/image-asset.jpeg";
+        this.backgrImg.src = "./assets/image-asset.png";
     }
 
     DrawBorder(ctx){

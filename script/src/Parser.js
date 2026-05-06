@@ -34,11 +34,15 @@ export class Parser{
 
         switch(key) {
             case 'KeyA':
+            case 'ArrowLeft':
                 return KEYS._LEFT;
+            case 'ArrowRight':
             case 'KeyD':
                 return KEYS._RIGHT;
+            case 'ArrowUp':
             case 'KeyW':
                 return KEYS._UP;
+            case 'ArrowDown':
             case 'KeyS':
                 return KEYS._DOWN;
         }
